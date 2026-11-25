@@ -1,0 +1,250 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مفاجأة عيد الميلاد</title>
+<style>
+*{box-sizing:border-box}
+body{
+margin:0;min-height:100vh;
+font-family:Arial,sans-serif;
+background:linear-gradient(135deg,#ffe0ed,#e9ddff,#fff0c9);
+display:flex;align-items:center;justify-content:center;
+text-align:center;color:#70466f;
+padding:20px;overflow-x:hidden
+}
+.card{
+background:#ffffffed;padding:28px 20px;
+border-radius:28px;width:100%;max-width:470px;
+box-shadow:0 12px 40px #9e719c35;
+position:relative;z-index:2
+}
+h1{color:#d65b96}
+p{line-height:1.9;font-size:17px}
+input{
+width:100%;padding:14px;border:2px solid #e8a6c5;
+border-radius:14px;font-size:17px;text-align:center;margin:15px 0
+}
+button{
+background:#d96b9e;color:white;border:0;
+padding:13px 20px;border-radius:15px;
+font-size:16px;cursor:pointer;margin:8px
+}
+button:hover{background:#b94c85}
+.hidden{display:none!important}
+.gifts{
+display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0
+}
+.gift{
+background:#f8e3f0;color:#814b76;
+border:2px solid #efbad4;padding:22px 5px;
+border-radius:18px;font-size:24px
+}
+.gift span{display:block;font-size:14px;margin-top:8px}
+.big{font-size:85px;margin:20px}
+#music{position:fixed;top:10px;left:10px;z-index:5}
+.confetti{
+position:fixed;top:-30px;font-size:25px;
+z-index:10;animation:fall 4s linear forwards
+}
+@keyframes fall{
+to{transform:translateY(110vh) rotate(700deg);opacity:0}
+}
+.cake{font-size:90px;animation:bounce 1s infinite alternate}
+@keyframes bounce{to{transform:translateY(-12px)}}
+</style>
+</head>
+<body>
+
+<button id="music" onclick="toggleMusic()">تشغيل الموسيقى</button>
+
+<!-- الصفحة الأولى -->
+<div class="card" id="welcome">
+<h1>سؤال مهم جداً</h1>
+<h2>عيد ميلاد مين اليوم؟</h2>
+<p>اكتبي اسم صاحبة العيد لنكشف عن المفاجأة!</p>
+<input id="name" placeholder="اسم صاحبة العيد">
+<button onclick="start()">كشف المفاجأة</button>
+</div>
+
+<!-- قائمة الهدايا -->
+<div class="card hidden" id="menu">
+<h1>كل عام وإنتِ بخير يا <span id="herName"></span></h1>
+<p>أمامك 6 هدايا استثنائية!</p>
+<p>اختاري رقم واكتشفي شو مخبيلك.</p>
+
+<div class="gifts">
+<button class="gift" onclick="openGift(1)">1<span>هدية رقم واحد</span></button>
+<button class="gift" onclick="openGift(2)">2<span>هدية رقم اثنين</span></button>
+<button class="gift" onclick="openGift(3)">3<span>هدية رقم ثلاثة</span></button>
+<button class="gift" onclick="openGift(4)">4<span>هدية رقم أربعة</span></button>
+<button class="gift" onclick="openGift(5)">5<span>هدية رقم خمسة</span></button>
+<button class="gift" onclick="openGift(6)">6<span>هدية رقم ستة</span></button>
+</div>
+
+<p>خلصتي من استكشاف الهدايا؟</p>
+<button onclick="celebrate()">انتهيت من الهدايا</button>
+</div>
+
+<!-- صفحة الهدية -->
+<div class="card hidden" id="giftPage">
+<h1 id="giftTitle"></h1>
+<div class="big" id="giftIcon"></div>
+<h2 id="giftName"></h2>
+<p id="giftDescription"></p>
+<button onclick="backToMenu()">رجوع للهدايا</button>
+</div>
+
+<!-- النهاية -->
+<div class="card hidden" id="final">
+<div class="cake">🎂</div>
+<h1>مفاجأة!</h1>
+<h2 id="finalName"></h2>
+<p>
+كل عام وانتي بألف خير يا قباري.
+<br>
+يارب تكون أيامك كلها فرح وسعادة ونجاح،
+وتتحقق كل أمنياتك وأحلامك.
+<br><br>
+وانشالله يجي اليوم اللي نلتقي فيه بأوروبا.
+<br><br>
+  وعقبال المية
+</p>
+<h1>🎊🎉🎈</h1>
+
+</div>
+
+<script>
+const gifts={
+1:{
+icon:"📱",
+title:"هدية رقم واحد",
+name:"آيفون آخر إصدار!",
+desc:"مبرووووك! ربحتي أحدث آيفون بالعالم! اختاري اللون اللي بدك ياه، لأنه اليوم كل شي على حسابنا!"
+},
+2:{
+icon:"✈️",
+title:"هدية رقم اثنين",
+name:"طيارة خاصة!",
+desc:"مبروك! صار عندك طيارة خاصة، والكابتن ناطرك. الوجهة حسب مزاج الأميرة!"
+},
+3:{
+icon:"🕰️",
+title:"هدية رقم ثلاثة",
+name:"لقاء هتلر!",
+desc:"رحلة عبر الزمن للقاء هتلر! هدية تاريخية لا تتكرر. الرجاء عدم تحويل اللقاء إلى حصة تاريخ!"
+},
+4:{
+icon:"🇰🇷",
+title:"هدية رقم أربعة",
+name:"تذكرة سفر إلى كوريا!",
+desc:"جهزي شنطتك! تذكرتك إلى كوريا جاهزة!"
+},
+5:{
+icon:"🌴",
+title:"هدية رقم خمسة",
+name:"يوم كامل بدون معبد!",
+desc:"يوم كامل بدون معبد!"
+},
+6:{
+icon:"💎",
+title:"هدية رقم ستة",
+name:"أمنية واحدة!",
+desc:"بطاقة مفتوحة لتحقيق أمنية واحدة من اختيارك، ولكن عندنا شرط صغير جداً: كل شيء مسموح إلا يونغي!"
+}
+};
+
+function show(id){
+["welcome","menu","giftPage","final"].forEach(x=>
+document.getElementById(x).classList.add("hidden"));
+document.getElementById(id).classList.remove("hidden");
+}
+
+function start(){
+let n=document.getElementById("name").value.trim();
+if(!n)return;
+document.getElementById("herName").textContent=n;
+document.getElementById("finalName").textContent="يا "+n+"!";
+show("menu");
+musicOn=true;
+playMusic();
+}
+
+function openGift(n){
+let g=gifts[n];
+document.getElementById("giftTitle").textContent=g.title;
+document.getElementById("giftIcon").textContent=g.icon;
+document.getElementById("giftName").textContent=g.name;
+document.getElementById("giftDescription").textContent=g.desc;
+show("giftPage");
+playNote(660);
+}
+
+function backToMenu(){
+show("menu");
+playNote(523);
+}
+
+function celebrate(){
+show("final");
+for(let i=0;i<130;i++){
+setTimeout(()=>{
+let el=document.createElement("div");
+el.className="confetti";
+el.textContent=["🎉","🎊","💗","✨","🎈","🌸"][Math.floor(Math.random()*6)];
+el.style.left=Math.random()*100+"vw";
+document.body.appendChild(el);
+setTimeout(()=>el.remove(),4500);
+},i*35);
+}
+for(let i=0;i<12;i++)
+setTimeout(()=>playNote(500+i*45),i*200);
+}
+
+let audio;
+let musicOn=false;
+let musicTimer;
+
+function playNote(freq){
+try{
+audio=audio||new(window.AudioContext||window.webkitAudioContext)();
+if(audio.state==="suspended")audio.resume();
+let osc=audio.createOscillator();
+let gain=audio.createGain();
+osc.frequency.value=freq;
+osc.type="sine";
+gain.gain.setValueAtTime(.10,audio.currentTime);
+gain.gain.exponentialRampToValueAtTime(.001,audio.currentTime+.3);
+osc.connect(gain);
+gain.connect(audio.destination);
+osc.start();
+osc.stop(audio.currentTime+.3);
+}catch(e){}
+}
+
+function playMusic(){
+if(musicTimer)clearInterval(musicTimer);
+let melody=[523,523,587,523,698,659,523,523,587,523,784,698];
+let i=0;
+musicTimer=setInterval(()=>{
+if(musicOn){
+playNote(melody[i%melody.length]);
+i++;
+}
+},450);
+}
+
+function toggleMusic(){
+musicOn=!musicOn;
+document.getElementById("music").textContent=
+musicOn?"إيقاف الموسيقى":"تشغيل الموسيقى";
+if(musicOn)playMusic();
+else clearInterval(musicTimer);
+}
+</script>
+</body>
+</html>
+
+
